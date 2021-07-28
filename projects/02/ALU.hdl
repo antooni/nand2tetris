@@ -42,5 +42,27 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+    //zx
+        Mux16(a=x,b[0..15]=false,sel=zx,out=xZX);
+    //zy
+        Mux16(a=y,b[0..15]=false,sel=zy,out=yZY);
+    //nx
+        Not16(in=xZX,out=notX);
+        Mux16(a=xZX,b=notX,sel=nx,out=xNX);
+    //ny
+        Not16(in=yZY,out=notY);
+        Mux16(a=yZY,b=notY,sel=ny,out=yNY);
+    //f
+        And16(a=xNX,b=yNY,out=xNXandyNY);
+        Add16(a=xNX,b=yNY,out=xNXplusyNY);
+        Mux16(a=xNXandyNY,b=xNXplusyNY,sel=f,out=afterFunction);
+    //no
+        Not16(in=afterFunction,out=negAfterFunction);
+        Mux16(a=afterFunction,b=negAfterFunction,sel=no,out=out);
+        //how to reuse output
+    //zr how to convert 16bit to one
+        //Not16(in=out,out=notOut);
+        //And16(a=notOut,b[0..15]=true);
+    //ng if MSB is == 1 then number is negative
+        Mux(a=false, b=true, sel=out[15], out=ng);
 }
